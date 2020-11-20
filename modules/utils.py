@@ -44,6 +44,6 @@ def validate_epoch(model, loader, output_path, device, best_accuracy):
     if test_accuracy > best_accuracy:
         best_accuracy = test_accuracy
         torch.save(model.state_dict(), os.path.join(output_path, 'best_model.pth'))
-        print("Best model saved at :", output_path)
+        print("Best model saved at :", os.path.join(output_path, 'best_model.pth'))
     print('====> Val set accuracy: {:.4f}'.format(test_accuracy * 100))
     return best_accuracy

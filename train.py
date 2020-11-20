@@ -1,5 +1,7 @@
 from __future__ import print_function
 import argparse
+import os
+
 import torch.utils.data
 import torchvision
 from torch import optim
@@ -38,10 +40,28 @@ if __name__ == "__main__":
 
     best_acc = 0.0
     model = ConvClassifier().to(device)
-    output_path = 'models/test'
-    model.load_state_dict(torch.load('models/test/last_model.pth'))
+
+    training_name = 'test2'
+    output_path = os.path.join('models', training_name)
+    last_model_path = os.path.join(output_path, 'last_model.pth')
+    if os.path.isfile(last_model_path):
+        model.load_state_dict(torch.load(last_model_path))
+        print()
+        print('*************************** RESUME TRAINING ***************************')
+        print()
+    else:
+        print()
+        print('*************************** NEW TRAIN ***************************')
+        print()
+        if not os.path.isdir('models'):
+            os.mkdir('models')
+        if not os.path.isdir(output_path):
+            os.mkdir(output_path)
+
     optimizer = optim.Adam(model.parameters(), lr=1e-3, betas=(0.95, 0.999))
-    print(device)
+    print('Training on', device)
+    print()
+
     for epoch in range(1, args.epochs + 1):
         train_epoch(model, epoch, train_loader, optimizer, device)
         best_acc = validate_epoch(model, val_loader, output_path, device, best_acc)
